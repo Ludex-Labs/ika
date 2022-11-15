@@ -1,7 +1,5 @@
-mod template;
-
-use std::borrow::Cow;
 use std::{fs, io};
+use std::borrow::Cow;
 use std::io::BufWriter;
 use std::net::TcpStream;
 use std::path::{Path, PathBuf};
@@ -11,10 +9,11 @@ use std::time::Duration;
 
 use anyhow::{Error, Result};
 use clap::{Args, Parser, Subcommand};
-
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
+
+mod template;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -60,7 +59,7 @@ impl Init {
             .output()
             .map_err(|e| anyhow::format_err!("npm install failed: {}", e.to_string()))?;
 
-        /* add git init */
+        /* git init */
         let git_result = Command::new("git")
             .arg("init")
             .stdout(Stdio::inherit())
@@ -89,11 +88,11 @@ struct Test {
 
 impl Test {
     fn run(&self) -> Result<()> {
-        // GET RID
-        let dir = std::env::current_dir()?.display().to_string();
-        let path = Path::new(&dir).join("example");
-        assert!(std::env::set_current_dir(&path).is_ok());
-        // END GET RID
+        // // GET RID
+        // let dir = std::env::current_dir()?.display().to_string();
+        // let path = Path::new(&dir).join("example");
+        // assert!(std::env::set_current_dir(&path).is_ok());
+        // // END GET RID
 
         println!("Running tests");
         let dir = std::env::current_dir()?.display().to_string();
@@ -148,43 +147,29 @@ impl Test {
 
             match detect_tcp("127.0.0.1:9000", 30) {
                 Ok(()) => {
-
-                            let keys = {
-                                let file_content = fs::read_to_string("./test-ledger/sui.keystore").expect("error reading keystore file");
-                                file_content
-                            };
-
-
-                            // let test_result = Command::new("npm")
-                            //     .arg("test")
-                            //     .env("SUI_KEYSTORE", &keys)
-                            //     .env("SUI_BUILD", build().unwrap())
-                            //     .stdout(Stdio::inherit())
-                            //     .stderr(Stdio::inherit())
-                            //     .output()
-                            //     .map_err(anyhow::Error::from);
+                    let keys = {
+                        let file_content = fs::read_to_string("./test-ledger/sui.keystore").expect("error reading keystore file");
+                        file_content
+                    };
                     let test_result = run_integration_test(&keys);
 
+                    if let Ok(mut child) = sui_validator {
+                        if let Err(err) = child.kill() {
+                            println!("Failed to kill subprocess {}: {}", child.id(), err);
+                        }
+                    }
 
-                            if let Ok(mut child) = sui_validator {
-                                if let Err(err) = child.kill() {
-                                    println!("Failed to kill subprocess {}: {}", child.id(), err);
-                                }
+                    match test_result {
+                        Ok(exit) => {
+                            if !exit.status.success() {
+                                std::process::exit(exit.status.code().unwrap());
                             }
-
-                            match test_result {
-                                Ok(exit) => {
-                                    if !exit.status.success() {
-                                        std::process::exit(exit.status.code().unwrap());
-                                    }
-                                }
-                                Err(err) => {
-                                    println!("Failed to run test: {:#}", err);
-                                    return Err(err);
-                                }
-                            }
-
-
+                        }
+                        Err(err) => {
+                            println!("Failed to run test: {:#}", err);
+                            return Err(err);
+                        }
+                    }
                 }
                 Err(err) => {
                     println!("Failed to detect validator: {:#}", err);
@@ -253,39 +238,6 @@ pub fn run_integration_test(keys: &String) -> Result<Output> {
         .map_err(anyhow::Error::from)?;
     Ok(test_result)
 }
-
-// pub fn copy_recursively(source: impl AsRef<Path>, destination: impl AsRef<Path>) -> Result<()> {
-//     fs::create_dir_all(&destination)?;
-//     for entry in fs::read_dir(source)? {
-//         let entry = entry?;
-//         let filetype = entry.file_type()?;
-//         if filetype.is_dir() {
-//             copy_recursively(entry.path(), destination.as_ref().join(entry.file_name()))?;
-//         } else {
-//             copy_template(entry.path(), destination.as_ref().join(entry.file_name()))?;
-//         }
-//     }
-//     Ok(())
-// }
-//
-// pub fn copy_template(
-//     template: PathBuf,
-//     destination: PathBuf,
-// ) -> Result<()> {
-//     let old_file = fs::File::open(template).expect("Could not read file");
-//     let new_file = fs::File::create(destination).expect("Failed to create file");
-//     let mut buffered_out = BufWriter::new(new_file);
-//     let buffered = io::BufReader::new(old_file);
-//     buffered.lines().map(
-//         |line_res|
-//             line_res.and_then(
-//                 |line|
-//                     buffered_out.write_all(line.replace("String_1", "String_2").as_bytes())
-//             )
-//     ).collect::<Result<(), _>>().expect("IO failed");
-//     Ok(())
-// }
-
 
 fn main() {
     let cli = Cli::parse();

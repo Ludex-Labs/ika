@@ -26,7 +26,6 @@ enum Commands {
 
 #[derive(Args)]
 struct Init {
-    #[arg(short, long)]
     name: String,
 }
 
@@ -42,6 +41,7 @@ impl Init {
         fs::write("Move.toml", template::move_manifest(&self.name, "npm run test"))?;
         fs::write("sources/my_module.move", template::source(&self.name))?;
         fs::write("README.md", template::readme())?;
+        fs::write(".gitignore", template::gitignore())?;
 
         /* typescript specific generation */
         fs::write("tsconfig.json", template::ts_config())?;

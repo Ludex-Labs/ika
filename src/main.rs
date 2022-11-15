@@ -8,7 +8,7 @@ use std::time::Duration;
 
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 mod template;
 

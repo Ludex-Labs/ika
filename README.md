@@ -11,12 +11,12 @@ Currently, the only way to install the starter is to clone the repo and install
 ## Create a new project
 To create a new project run the following command
 
-```sui-starter init <project-name>```
+```sui_starter init <project-name>```
 
 ## Run tests against the project
 To run tests against the project run the following command
 
-```sui-starter test```
+```sui_starter test```
 
 this will run the test entry in Move.toml under extra (which acts as a e2e test) and the sui move tests.
 ```
@@ -35,7 +35,7 @@ test = "npm run test"
 
 Flags can be provided to skip the sui tests or the e2e tests
 
-```sui-starter test --contract --full```
+```sui_starter test --contract --full```
 
 
 ## Prior Art

@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::fs;
 use std::net::TcpStream;
 use std::path::Path;
@@ -7,6 +8,7 @@ use std::time::Duration;
 
 use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
+use serde::{Deserialize, Serialize};
 
 mod template;
 
@@ -83,14 +85,13 @@ struct Test {
     clear: bool,
 }
 
+#[derive(Deserialize)]
+pub struct MoveConfig {
+    pub extra: BTreeMap<String, String>,
+}
+
 impl Test {
     fn run(&self) -> Result<()> {
-        // // GET RID
-        // let dir = std::env::current_dir()?.display().to_string();
-        // let path = Path::new(&dir).join("example");
-        // assert!(std::env::set_current_dir(&path).is_ok());
-        // // END GET RID
-
         println!("Running tests");
         let dir = std::env::current_dir()?.display().to_string();
         let path = Path::new(&dir).join("Move.toml");
@@ -225,8 +226,18 @@ pub fn detect_tcp(proto: &str, max: i32) -> Result<()> {
 }
 
 pub fn run_integration_test(keys: &String) -> Result<Output> {
-    let test_result = Command::new("npm")
-        .arg("test")
+    let config = read_config().unwrap();
+    let cmd = config.extra
+        .get("test")
+        .expect("Not able to find script for `test` add an entry in Move.toml under `[extra]`")
+        .clone();
+    let mut args: Vec<&str> = cmd
+        .split(' ')
+        .collect();
+    let program = args.remove(0);
+
+    let test_result = Command::new(program)
+        .args(args)
         .env("SUI_KEYSTORE", &keys)
         .env("SUI_BUILD", build().unwrap())
         .stdout(Stdio::inherit())
@@ -235,6 +246,14 @@ pub fn run_integration_test(keys: &String) -> Result<Output> {
         .map_err(anyhow::Error::from)?;
     Ok(test_result)
 }
+
+pub fn read_config() -> Result<MoveConfig> {
+    match toml::from_str::<MoveConfig>(&fs::read_to_string("./Move.toml").unwrap()) {
+        Ok(config) => Ok(config),
+        Err(err) => Err(anyhow::Error::from(err)),
+    }
+}
+
 
 fn main() {
     let cli = Cli::parse();

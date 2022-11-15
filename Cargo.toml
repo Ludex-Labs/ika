@@ -1,0 +1,16 @@
+[package]
+name = "sui_starter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.32"
+clap = { version = "4.0.18", features = ["derive"] }
+serde = { version = "1.0" }
+serde_json = "1.0"
+
+
+#sui = { git = "https://github.com/MystenLabs/sui.git", branch = "main" }
+#
+#[patch.crates-io]
+#sqlx = { git="https://github.com/huitseeker/sqlx", branch="update_libsqlite3" }

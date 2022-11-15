@@ -1,17 +1,12 @@
-use std::{fs, io};
-use std::borrow::Cow;
-use std::io::BufWriter;
+use std::fs;
 use std::net::TcpStream;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::{Child, Command, Output, Stdio};
 use std::thread::sleep;
 use std::time::Duration;
 
-use anyhow::{Error, Result};
+use anyhow::Result;
 use clap::{Args, Parser, Subcommand};
-use serde::Deserialize;
-use serde::Serialize;
-use serde_json::Value;
 
 mod template;
 
@@ -38,19 +33,21 @@ struct Init {
 impl Init {
     fn run(&self) -> Result<()> {
         println!("Init: {}", &self.name);
-        fs::create_dir(name.clone())?;
-        std::env::set_current_dir(&name)?;
+        fs::create_dir(&self.name.clone())?;
+        std::env::set_current_dir(&self.name)?;
 
         fs::create_dir("sources")?;
         fs::create_dir("e2etests")?;
 
-        fs::write("Move.toml", template::move_toml(&name))?;
-        fs::write("sources/my_module.move", template::source(&name))?;
+        fs::write("Move.toml", template::move_manifest(&self.name, "npm run test"))?;
+        fs::write("sources/my_module.move", template::source(&self.name))?;
+        fs::write("README.md", template::readme())?;
 
         /* typescript specific generation */
         fs::write("tsconfig.json", template::ts_config())?;
-        fs::write("package.json", template::package_json(&name))?;
+        fs::write("package.json", template::package_json(&self.name))?;
         fs::write("e2etests/my_module.ts", template::ts_test())?;
+
 
         Command::new("npm")
             .arg("install")
@@ -70,7 +67,7 @@ impl Init {
             eprintln!("Failed to automatically initialize a new git repository");
         }
 
-        println!("{} initialized", name);
+        println!("{} initialized", &self.name);
         Ok(())
     }
 }

@@ -8,6 +8,8 @@ anyhow = "1.0.32"
 clap = { version = "4.0.18", features = ["derive"] }
 serde = { version = "1.0" }
 serde_json = "1.0"
+toml = "0.5.8"
+heck = "0.3.1"
 
 
 #sui = { git = "https://github.com/MystenLabs/sui.git", branch = "main" }

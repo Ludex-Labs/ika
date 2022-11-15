@@ -1,3 +1,5 @@
+use heck::SnakeCase;
+
 pub fn ts_config() -> &'static str {
     r#"{
     "compilerOptions": {
@@ -90,7 +92,7 @@ pub fn package_json(name: &str) -> String {
         "typescript": "^4.8.4"
     }}
 }}"#, name.to_lowercase())
-        }
+}
 
 pub fn move_manifest(name: &str, test: &str) -> String {
     format!(

@@ -40,3 +40,4 @@ Flags can be provided to skip the sui tests or the e2e tests
 
 ## Prior Art
 [Anchor](https://github.com/coral-xyz/anchor)
+[Hardhat](https://hardhat.org/)

@@ -5,10 +5,10 @@
 </div>
 
 ## What is it?
-A starter kit for building a [Sui](https://sui.io/) applications. It includes a basic structure for a Sui application with a e2e local testing envrionment as a cli.
+A starter kit for building a [**Sui**](https://sui.io/) applications. It includes a basic structure for a **Sui** application with a e2e local testing envrionment as a cli.
 
 ## Installation
-Firstly you need to go through the process of installing sui.
+Firstly you need to go through the process of installing **Sui**.
 You can find this [here](https://docs.sui.io/build/install)
 
 Currently, the only way to install the starter is to clone the repo and install 
@@ -25,7 +25,7 @@ To run tests against the project run the following command
 
 ```ika test```
 
-This will run the test entry in Move.toml under ika (which acts as a e2e test) and the Sui move tests.
+This will run the test entry in Move.toml under ika (which acts as a e2e test) and the **Sui** move tests.
 ```
 [package]
 ...
@@ -40,7 +40,7 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 test = "npm run test"
 ```
 
-Flags can be provided to skip the Sui tests or the e2e tests
+Flags can be provided to skip the **Sui** tests or the e2e tests
 
 ```ika test --skip-contract --skip-e2e```
 

@@ -107,7 +107,7 @@ Sui = {{ git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fra
 {} =  "0x0"
 sui =  "0000000000000000000000000000000000000002"
 
-[extra]
+[ika]
 test = "{}"
 "#, name.to_snake_case(), name.to_snake_case(), test)
 }

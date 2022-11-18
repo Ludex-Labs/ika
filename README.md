@@ -29,7 +29,7 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 [addresses]
 ...
 
-[extra]
+[ika]
 test = "npm run test"
 ```
 

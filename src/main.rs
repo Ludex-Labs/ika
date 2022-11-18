@@ -87,7 +87,7 @@ struct Test {
 
 #[derive(Deserialize)]
 pub struct MoveConfig {
-    pub extra: BTreeMap<String, String>,
+    pub ika: BTreeMap<String, String>,
 }
 
 impl Test {
@@ -227,9 +227,9 @@ pub fn detect_tcp(proto: &str, max: i32) -> Result<()> {
 
 pub fn run_integration_test(keys: &String) -> Result<Output> {
     let config = read_config().unwrap();
-    let cmd = config.extra
+    let cmd = config.ika
         .get("test")
-        .expect("Not able to find script for `test` add an entry in Move.toml under `[extra]`")
+        .expect("Not able to find script for `test` add an entry in Move.toml under `[ika]`")
         .clone();
     let mut args: Vec<&str> = cmd
         .split(' ')

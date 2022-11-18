@@ -25,7 +25,7 @@ To run tests against the project run the following command
 
 ```ika test```
 
-This will run the test entry in Move.toml under ika (which acts as a e2e test) and the **Sui** move tests.
+This will run the test entry in **Move.toml** under **ika** (which acts as a e2e test) and the **Sui** move tests.
 ```
 [package]
 ...

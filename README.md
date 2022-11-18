@@ -5,9 +5,12 @@
 </div>
 
 ## What is it?
-A starter kit for building a Sui applications. It includes a basic structure for a Sui application with a e2e local testing envrionment as a cli.
+A starter kit for building a [Sui](https://sui.io/) applications. It includes a basic structure for a Sui application with a e2e local testing envrionment as a cli.
 
 ## Installation
+Firstly you need to go through the process of installing sui.
+You can find this [here](https://docs.sui.io/build/install)
+
 Currently, the only way to install the starter is to clone the repo and install 
 
 ```cargo install --path .```
@@ -22,7 +25,7 @@ To run tests against the project run the following command
 
 ```ika test```
 
-this will run the test entry in Move.toml under extra (which acts as a e2e test) and the sui move tests.
+This will run the test entry in Move.toml under ika (which acts as a e2e test) and the Sui move tests.
 ```
 [package]
 ...

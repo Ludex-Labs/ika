@@ -206,5 +206,5 @@ pub fn gitignore() -> &'static str {
     r#"node_modules
 build
 .DS_Store
-test-ledger"#
+.ika"#
 }

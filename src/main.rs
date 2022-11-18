@@ -76,12 +76,12 @@ impl New {
 
 #[derive(Args)]
 struct Test {
-    #[arg(short, long)]
-    contract: bool,
-    #[arg(short, long)]
-    full: bool,
-
     #[arg(long)]
+    skip_contract: bool,
+    #[arg(long)]
+    skip_e2e: bool,
+
+    #[arg(short, long)]
     clear: bool,
 }
 
@@ -102,23 +102,23 @@ impl Test {
 
         if self.clear {
             println!("Clearing test directory");
-            let path = Path::new(&dir).join("/test-ledger");
+            let path = Path::new(&dir).join("/.ika/test-ledger");
             if path.exists() {
                 fs::remove_dir_all(path)?;
             }
         }
 
-        if !Path::new(&format!("{}{}", dir.clone(), "/test-ledger/network.yaml")).exists() {
-            println!("test-ledger does not exist");
-            fs::create_dir_all("./test-ledger")?;
+        if !Path::new(&format!("{}{}", dir.clone(), "/.ika/test-ledger/network.yaml")).exists() {
+            println!(".ika/test-ledger does not exist");
+            fs::create_dir_all("./.ika/test-ledger")?;
             let create_test_ledger = Command::new("sui")
-                .args(["genesis", "--working-dir", "./test-ledger", "--force"])
+                .args(["genesis", "--working-dir", "./.ika/test-ledger", "--force"])
                 .output()
                 .expect("Failed to build validator");
             assert!(create_test_ledger.status.success())
         }
 
-        if !self.contract {
+        if !self.skip_contract {
             let test_result = Command::new("sui")
                 .arg("move")
                 .arg("test")
@@ -140,13 +140,13 @@ impl Test {
             }
         }
 
-        if !self.full {
+        if !self.skip_e2e {
             let sui_validator = run_validator();
 
             match detect_tcp("127.0.0.1:9000", 30) {
                 Ok(()) => {
                     let keys = {
-                        let file_content = fs::read_to_string("./test-ledger/sui.keystore").expect("error reading keystore file");
+                        let file_content = fs::read_to_string("./.ika/test-ledger/sui.keystore").expect("error reading keystore file");
                         file_content
                     };
                     let test_result = run_integration_test(&keys);
@@ -190,7 +190,7 @@ pub fn run_validator() -> Result<Child> {
     let sui_validator = Command::new("sui")
         .arg("start")
         .arg("--network.config")
-        .arg("./test-ledger/network.yaml")
+        .arg("./.ika/test-ledger/network.yaml")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn()

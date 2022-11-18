@@ -40,7 +40,7 @@ Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-fram
 test = "npm run test"
 ```
 
-Flags can be provided to skip the sui tests or the e2e tests
+Flags can be provided to skip the Sui tests or the e2e tests
 
 ```ika test --skip-contract --skip-e2e```
 

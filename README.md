@@ -35,7 +35,7 @@ test = "npm run test"
 
 Flags can be provided to skip the sui tests or the e2e tests
 
-```ika test --skip_contract --skip_e2e```
+```ika test --skip-contract --skip-e2e```
 
 
 ## Prior Art

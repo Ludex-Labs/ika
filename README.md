@@ -4,7 +4,6 @@
   <h1>Ika</h1>
 </div>
 
-## What is it?
 A starter kit for building a [**Sui**](https://sui.io/) applications. It includes a basic structure for a **Sui** application with a e2e local testing envrionment as a cli.
 
 ## Installation

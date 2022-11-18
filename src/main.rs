@@ -22,16 +22,16 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    Init(Init),
+    New(New),
     Test(Test),
 }
 
 #[derive(Args)]
-struct Init {
+struct New {
     name: String,
 }
 
-impl Init {
+impl New {
     fn run(&self) -> Result<()> {
         println!("Init: {}", &self.name);
         fs::create_dir(&self.name.clone())?;
@@ -259,7 +259,7 @@ fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
-        Commands::Init(ctx) => {
+        Commands::New(ctx) => {
             ctx.run().unwrap();
         }
         Commands::Test(ctx) => {

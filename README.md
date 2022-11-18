@@ -1,4 +1,4 @@
-# Sui Starter
+# Ika 
 
 ## What is it?
 A starter kit for building a Sui applications. It includes a basic structure for a Sui application with a e2e local testing envrionment as a cli.
@@ -11,12 +11,12 @@ Currently, the only way to install the starter is to clone the repo and install
 ## Create a new project
 To create a new project run the following command
 
-```sui_starter init <project-name>```
+```ika new <project-name>```
 
 ## Run tests against the project
 To run tests against the project run the following command
 
-```sui_starter test```
+```ika test```
 
 this will run the test entry in Move.toml under extra (which acts as a e2e test) and the sui move tests.
 ```
@@ -35,7 +35,7 @@ test = "npm run test"
 
 Flags can be provided to skip the sui tests or the e2e tests
 
-```sui_starter test --contract --full```
+```ika test --contract --full```
 
 
 ## Prior Art

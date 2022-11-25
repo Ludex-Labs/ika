@@ -4,7 +4,7 @@
   <h1>Ika</h1>
 </div>
 
-A starter kit for building a [**Sui**](https://sui.io/) applications. It includes a basic structure for a **Sui** application with a e2e local testing envrionment as a cli.
+A starter kit for building a [**Sui**](https://sui.io/) applications. It includes a basic structure for a **Sui** application with a e2e local testing envrionment as a cli. Join our [Discord](https://discord.gg/gbWbspfGgp)!
 
 ## Installation
 Firstly you need to go through the process of installing **Sui**.

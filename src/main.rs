@@ -38,10 +38,12 @@ impl New {
         std::env::set_current_dir(&self.name)?;
 
         fs::create_dir("sources")?;
+        fs::create_dir("tests")?;
         fs::create_dir("e2etests")?;
 
         fs::write("Move.toml", template::move_manifest(&self.name, "npm run test"))?;
-        fs::write("sources/my_module.move", template::source(&self.name))?;
+        fs::write("sources/counter.move", template::source(&self.name))?;
+        fs::write("tests/counter_test.move", template::source_test(&self.name))?;
         fs::write("README.md", template::readme())?;
         fs::write(".gitignore", template::gitignore())?;
 

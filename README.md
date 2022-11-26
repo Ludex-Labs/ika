@@ -10,9 +10,9 @@ A starter kit for building a [**Sui**](https://sui.io/) applications. It include
 Firstly you need to go through the process of installing **Sui**.
 You can find this [here](https://docs.sui.io/build/install)
 
-Currently, the only way to install the starter is to clone the repo and install 
+Install ika from this repo.
 
-```cargo install --path .```
+```cargo install --git https://github.com/Ludex-Labs/ika.git ika```
 
 ## Create a new project
 To create a new project run the following command

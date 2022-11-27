@@ -44,7 +44,7 @@ impl New {
         fs::write("Move.toml", template::move_manifest(&self.name, "npm run test"))?;
         fs::write("sources/counter.move", template::source(&self.name))?;
         fs::write("tests/counter_test.move", template::source_test(&self.name))?;
-        fs::write("README.md", template::readme())?;
+        fs::write("README.md", template::readme(&self.name))?;
         fs::write(".gitignore", template::gitignore())?;
 
         /* typescript specific generation */

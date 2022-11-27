@@ -192,13 +192,25 @@ test = "{}"
 "#, name.to_snake_case(), name.to_snake_case(), test)
 }
 
-pub fn readme() -> &'static str {
-    r#"# Starter Project
+pub fn readme(name: &str) -> String {
+    format!(r#"# {}
 
-To run an e2e test all you need to call is
+To run move test and e2e test:
 
-    starter test
-"#
+    ika test
+
+To run only the move test:
+
+    ika test --skip-e2e
+
+To run only the e2e test:
+
+    ika test --skip-contract
+
+To run the e2e with a clean ledger:
+
+    ika test --clear
+"#, name.to_snake_case())
 }
 
 pub fn ts_test() -> &'static str {

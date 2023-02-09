@@ -148,7 +148,10 @@ module {}::counter_test {{
         }};
         test_scenario::end(scenario_val);
     }}
-}}"#, name.to_snake_case(), name.to_snake_case())
+}}"#,
+        name.to_snake_case(),
+        name.to_snake_case()
+    )
 }
 
 pub fn package_json(name: &str) -> String {
@@ -168,10 +171,12 @@ pub fn package_json(name: &str) -> String {
         "ts-mocha": "^10.0.0"
     }},
     "dependencies": {{
-        "@mysten/sui.js": "^0.16.0",
+        "@mysten/sui.js": "^0.26.0",
         "typescript": "^4.8.4"
     }}
-}}"#, name.to_lowercase())
+}}"#,
+        name.to_lowercase()
+    )
 }
 
 pub fn move_manifest(name: &str, test: &str) -> String {
@@ -189,11 +194,16 @@ sui =  "0000000000000000000000000000000000000002"
 
 [ika]
 test = "{}"
-"#, name.to_snake_case(), name.to_snake_case(), test)
+"#,
+        name.to_snake_case(),
+        name.to_snake_case(),
+        test
+    )
 }
 
 pub fn readme(name: &str) -> String {
-    format!(r#"# {}
+    format!(
+        r#"# {}
 
 To run move test and e2e test:
 
@@ -210,7 +220,9 @@ To run only the e2e test:
 To run the e2e with a clean ledger:
 
     ika test --clear
-"#, name.to_snake_case())
+"#,
+        name.to_snake_case()
+    )
 }
 
 pub fn ts_test() -> &'static str {
@@ -264,15 +276,9 @@ export const createKeystoreSigners = (provider: Provider): RawSigner[] => JSON.p
               "base64"
           )
       )
-  );
-  if(buff.length === 65) {
-    const keypair = Ed25519Keypair.fromSeed(buff.slice(33));
-    return new RawSigner(keypair, provider);
-  } else if(buff.length === 66) {
-    throw new Error("The other key type is not supported yet");
-  } else {
-    throw new Error("Invalid key length");
-  }
+  ); 
+  const keypair = Ed25519Keypair.fromSeed(buff.slice(1));
+  return new RawSigner(keypair, provider);
 });
 
 export async function publishPackage(

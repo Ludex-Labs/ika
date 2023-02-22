@@ -24,6 +24,7 @@ struct Cli {
 enum Commands {
     New(New),
     Test(Test),
+    UpdateSui
 }
 
 #[derive(Args)]
@@ -257,6 +258,29 @@ pub fn read_config() -> Result<MoveConfig> {
 }
 
 
+pub fn update_sui() -> Result<()> {
+    let update_result = Command::new("cargo")
+        .args(["install", "--locked", "--git", "https://github.com/MystenLabs/sui.git", "--branch", "devnet", "sui"])
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .output()
+        .map_err(anyhow::Error::from);
+
+    match update_result {
+        Ok(exit) => {
+            if !exit.status.success() {
+                std::process::exit(exit.status.code().unwrap());
+            }
+        }
+        Err(err) => {
+            println!("Failed to run test: {:#}", err);
+            return Err(err);
+        }
+    }
+    Ok(())
+}
+
+
 fn main() {
     let cli = Cli::parse();
 
@@ -266,6 +290,9 @@ fn main() {
         }
         Commands::Test(ctx) => {
             ctx.run().unwrap();
+        }
+        Commands::UpdateSui => {
+            update_sui().unwrap();
         }
     }
 }

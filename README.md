@@ -43,7 +43,7 @@ Flags can be provided to skip the **Sui** tests or the e2e tests
 
 ```ika test --skip-contract --skip-e2e```
 
-## Update sui binaries
+## Update Sui binaries
 
 Utility to update sui binaries. It wraps ```cargo install --locked --git https://github.com/MystenLabs/sui.git --branch devnet sui```
 

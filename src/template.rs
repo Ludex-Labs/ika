@@ -171,7 +171,7 @@ pub fn package_json(name: &str) -> String {
         "ts-mocha": "^10.0.0"
     }},
     "dependencies": {{
-        "@mysten/sui.js": "^0.26.0",
+        "@mysten/sui.js": "^0.30.0",
         "typescript": "^4.8.4"
     }}
 }}"#,
@@ -186,11 +186,11 @@ name = "{}"
 version = "0.0.1"
 
 [dependencies]
-Sui = {{ git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework", rev = "devnet" }}
+Sui = {{ git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "testnet" }}
 
 [addresses]
 {} =  "0x0"
-sui =  "0000000000000000000000000000000000000002"
+sui =  "0000000000000000000000000000000000000000000000000000000000000002"
 
 [ika]
 test = "{}"
@@ -228,17 +228,19 @@ To run the e2e with a clean ledger:
 pub fn ts_test() -> &'static str {
     r#"import {
   JsonRpcProvider,
-  Network,
   RawSigner,
   Ed25519Keypair,
-  getEvents,
   ObjectId,
-  Provider
+  TransactionBlock,
+  fromB64,
+  normalizeSuiObjectId,
+  Connection,
+  localnetConnection,
 } from "@mysten/sui.js";
 import "mocha";
 
 describe("my_module", () => {
-  const provider = new JsonRpcProvider(Network.LOCAL);
+  const provider = new JsonRpcProvider(new Connection(localnetConnection));
   let signers: RawSigner[];
   let creator: RawSigner;
   let player: RawSigner;
@@ -250,52 +252,60 @@ describe("my_module", () => {
   });
 
   it("deploy contract", async function () {
-    packageId = await publishPackage(creator);
+    packageId = await publishPackage(provider, creator);
 
     console.log(packageId);
-
   });
 });
 
+export const createKeystoreSigners = (provider: JsonRpcProvider): RawSigner[] =>
+  JSON.parse(process.env.SUI_KEYSTORE!).map((key: string) => {
+    const toArrayBuffer = (buf: Buffer) => {
+      const ab = new ArrayBuffer(buf.length);
+      const view = new Uint8Array(ab);
+      for (let i = 0; i < buf.length; ++i) {
+        view[i] = buf[i];
+      }
+      return ab;
+    };
 
-
-export const createKeystoreSigners = (provider: Provider): RawSigner[] => JSON.parse(process.env.SUI_KEYSTORE!).map((key: string) => {
-  const toArrayBuffer = (buf: Buffer) => {
-    const ab = new ArrayBuffer(buf.length);
-    const view = new Uint8Array(ab);
-    for (let i = 0; i < buf.length; ++i) {
-      view[i] = buf[i];
-    }
-    return ab;
-  }
-
-  const buff = new Uint8Array(
-      toArrayBuffer(
-          Buffer.from(
-              key,
-              "base64"
-          )
-      )
-  ); 
-  const keypair = Ed25519Keypair.fromSeed(buff.slice(1));
-  return new RawSigner(keypair, provider);
-});
+    const buff = new Uint8Array(toArrayBuffer(Buffer.from(key, "base64")));
+    const keypair = Ed25519Keypair.fromSecretKey(buff.slice(1));
+    return new RawSigner(keypair, provider);
+  });
 
 export async function publishPackage(
-    signer: RawSigner,
+  provider: JsonRpcProvider,
+  signer: RawSigner
 ): Promise<ObjectId> {
   const compiledModules = JSON.parse(process.env.SUI_BUILD || "[]");
-
-  const publishTxn = await signer.publish({
-    compiledModules: compiledModules,
-    gasBudget: 20000,
+  const tx = new TransactionBlock();
+  const [upgradeCap] = tx.publish(
+    compiledModules.modules.map((m: any) => Array.from(fromB64(m))),
+    compiledModules.dependencies.map((addr: string) =>
+      normalizeSuiObjectId(addr)
+    )
+  );
+  tx.transferObjects([upgradeCap], tx.pure(await signer.getAddress()));
+  const result = await signer.signAndExecuteTransactionBlock({
+    transactionBlock: tx,
   });
-
-  const publishEvent = getEvents(publishTxn).filter(
-      (e: any) => "publish" in e
-  )[0];
-
-  return publishEvent.publish.packageId;
+  const txn = await provider.getTransactionBlock({
+    digest: result.digest,
+    options: {
+      showObjectChanges: true,
+    },
+  });
+  const publishEvent = txn.objectChanges?.filter(
+    (e) => e.type === "published"
+  )[0] as {
+    packageId: string;
+    type: "published";
+    version: number;
+    digest: string;
+    modules: string[];
+  };
+  return publishEvent!.packageId;
 }
 "#
 }
